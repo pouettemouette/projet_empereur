@@ -26,17 +26,19 @@
   <main>
     <section class="page-intro"><p class="eyebrow">Demande de devis</p><h1>Contactez le Château de Monlet</h1><p>Indiquez votre besoin, votre date et les informations utiles. Le formulaire est prêt pour être branché à Formspree, Brevo, PHP ou un autre service.</p></section>
     <section class="contact-layout">
-      <form class="contact-form" id="contact-form" action="" method="post" novalidate>
-        <div class="form-row"><label for="name">Nom</label><input id="name" name="name" type="text" autocomplete="name" required></div>
+      <form action="https://formspree.io/f/mjgdkgwz" method="POST" class="contact-form">
+        <input type="hidden" name="_subject" value="Nouvelle demande depuis le site Château de Monlet">
+        <input type="text" name="_gotcha" style="display:none">
+        <input type="hidden" name="_next" value="https://www.chateau-monlet.fr/merci.html">
+        <div class="form-row"><label for="name">Nom</label><input id="name" name="nom" type="text" autocomplete="name" required></div>
         <div class="form-row"><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" required></div>
-        <div class="form-row"><label for="phone">Téléphone</label><input id="phone" name="phone" type="tel" autocomplete="tel"></div>
-        <div class="form-row"><label for="request-type">Type de demande</label><select id="request-type" name="request_type" required><option value="">Choisir</option><option>Location de salle</option><option>Spectacle</option><option>Événement privé</option><option>Événement professionnel</option><option>Hébergement</option><option>Autre</option></select></div>
-        <div class="form-row"><label for="date">Date souhaitée</label><input id="date" name="date" type="date"></div>
-        <div class="form-row"><label for="people">Nombre de personnes</label><input id="people" name="people" type="number" min="1" inputmode="numeric"></div>
+        <div class="form-row"><label for="phone">Téléphone</label><input id="phone" name="telephone" type="tel" autocomplete="tel" required></div>
+        <div class="form-row"><label for="request-type">Type de demande</label><select id="request-type" name="type_demande" required><option value="">Choisir</option><option>Location de salle</option><option>Spectacle</option><option>Événement privé</option><option>Événement professionnel</option><option>Hébergement</option><option>Autre</option></select></div>
+        <div class="form-row"><label for="date">Date souhaitée</label><input id="date" name="date_evenement" type="date" required></div>
+        <div class="form-row"><label for="people">Nombre de personnes</label><input id="people" name="nombre_personnes" type="number" min="1" inputmode="numeric"></div>
         <div class="form-row full"><label for="message">Message</label><textarea id="message" name="message" rows="7" required></textarea></div>
-        <div class="form-row full consent-row"><label><input name="rgpd_consent" type="checkbox" value="oui" required> J'accepte que mes informations soient utilisées pour répondre à ma demande.</label></div>
-        <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
-        <button class="btn btn-primary" type="submit">Envoyer ma demande</button>
+        <div class="form-row full consent-row"><label><input name="consentement" type="checkbox" value="oui" required> J'accepte que mes informations soient utilisées pour répondre à ma demande.</label></div>
+        <button type="submit" class="btn btn-primary">Envoyer ma demande</button>
         <p class="form-note">Les informations transmises servent uniquement à répondre à votre demande.</p>
       </form>
       <aside class="contact-side">

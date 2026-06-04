@@ -1,5 +1,4 @@
 const body = document.body;
-const CONTACT_EMAIL = "a-completer@example.com";
 const navToggle = document.querySelector(".nav-toggle");
 const siteNav = document.querySelector(".site-nav");
 
@@ -158,49 +157,5 @@ if (galleryButtons.length) {
   });
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape" && lightbox.classList.contains("is-open")) closeLightbox();
-  });
-}
-
-const contactForm = document.querySelector("#contact-form");
-if (contactForm) {
-  const status = document.querySelector("#form-status");
-
-  contactForm.addEventListener("submit", (event) => {
-    if (!contactForm.checkValidity()) {
-      event.preventDefault();
-      if (status) {
-        status.textContent = "Merci de compléter les champs obligatoires avant l'envoi.";
-      }
-      contactForm.reportValidity();
-      return;
-    }
-
-    const configuredAction = contactForm.getAttribute("action").trim();
-    if (configuredAction) {
-      return;
-    }
-
-    event.preventDefault();
-
-    const data = new FormData(contactForm);
-    const subject = encodeURIComponent("Demande depuis le site du Château de Monlet");
-    const lines = [
-      `Nom : ${data.get("name")}`,
-      `Email : ${data.get("email")}`,
-      `Téléphone : ${data.get("phone") || "Non renseigné"}`,
-      `Type de demande : ${data.get("request_type")}`,
-      `Date souhaitée : ${data.get("date") || "Non renseignée"}`,
-      `Nombre de personnes : ${data.get("people") || "Non renseigné"}`,
-      `Consentement RGPD : ${data.get("rgpd_consent") === "oui" ? "accepté" : "non renseigné"}`,
-      "",
-      "Message :",
-      data.get("message")
-    ];
-    const bodyText = encodeURIComponent(lines.join("\n"));
-
-    if (status) {
-      status.textContent = "Formulaire non configuré : ouverture d'un email prérempli. Remplacez l'adresse dans assets/js/main.js.";
-    }
-    window.location.href = `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${bodyText}`;
   });
 }
