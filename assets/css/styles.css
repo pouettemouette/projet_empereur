@@ -130,16 +130,15 @@ a { color: inherit; }
   max-width: 820px;
 }
 .hero-carousel {
+  position: relative;
+  width: 100%;
+  height: clamp(260px, 56.25vw, 72vh);
   min-height: 0;
+  overflow: hidden;
   background: var(--ink);
 }
 .hero-carousel::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  background: linear-gradient(90deg, rgba(36, 28, 23, .78), rgba(36, 28, 23, .4), rgba(36, 28, 23, .18));
-  pointer-events: none;
+  display: none;
 }
 .hero-slides,
 .hero-slide {
@@ -155,8 +154,31 @@ a { color: inherit; }
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   object-position: center;
+}
+.home-hero {
+  background: var(--stone);
+}
+.home-hero-content {
+  padding: 3rem clamp(20px, 5vw, 72px) 4rem;
+  text-align: center;
+}
+.home-hero-content h1 {
+  margin: .5rem 0 1rem;
+  font-size: clamp(2.8rem, 5vw, 5rem);
+}
+.home-hero-content p:not(.eyebrow) {
+  max-width: 760px;
+  margin: 0 auto;
+  font-size: clamp(1.08rem, 1.8vw, 1.35rem);
+}
+.home-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
 }
 .hero-carousel-btn {
   position: absolute;
@@ -598,9 +620,7 @@ a:focus-visible {
   }
   .room { grid-template-columns: 1fr; }
   .room img { aspect-ratio: 16 / 10; }
-  .hero,
-  .hero-carousel,
-  .hero-slide {
+  .hero {
     height: clamp(380px, 58vh, 540px);
   }
   .hero-carousel-btn {
@@ -613,61 +633,38 @@ a:focus-visible {
 }
 
 @media (max-width: 768px) {
-  .hero.hero-carousel {
-    display: flex;
-    flex-direction: column;
-    height: auto;
-    min-height: 0;
-    padding: 0;
-    color: var(--ink);
-    background: var(--stone);
+  .home-carousel {
+    height: clamp(260px, 64vw, 430px);
   }
-  .hero-carousel::after {
-    display: none;
-  }
-  .hero-carousel .hero-slides {
-    position: relative;
-    width: 100%;
-    height: clamp(280px, 55vw, 430px);
-    overflow: hidden;
-  }
-  .hero-carousel .hero-slide {
-    height: 100%;
-  }
-  .hero-carousel .hero-content {
-    position: static;
-    z-index: auto;
-    width: 100%;
-    max-width: none;
-    padding: 1.5rem 1.25rem 2rem;
-    background: var(--stone);
+  .home-hero-content {
+    padding: 2rem 1.25rem 2.5rem;
     text-align: center;
   }
-  .hero-carousel .hero-content h1 {
-    margin: 0 0 .75rem;
-    font-size: clamp(1.7rem, 7vw, 2.3rem);
+  .home-hero-content h1 {
+    font-size: clamp(2rem, 9vw, 3rem);
     line-height: 1.15;
   }
-  .hero-carousel .hero-content p:not(.eyebrow) {
-    max-width: 38rem;
-    margin: 0 auto 1.25rem;
-    font-size: 1rem;
-    line-height: 1.6;
+  .home-hero-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: .75rem;
+    max-width: 24rem;
+    margin-inline: auto;
   }
-  .hero-carousel .hero-actions {
-    justify-content: center;
-  }
-  .hero-carousel .btn-primary {
-    width: min(100%, 24rem);
-    min-height: 54px;
+  .home-hero-actions .btn {
+    width: 100%;
+    min-height: 52px;
   }
   .hero-carousel-btn {
     top: 50%;
     bottom: auto;
+    width: 38px;
+    height: 38px;
+    font-size: 1.7rem;
     transform: translateY(-50%);
   }
   .hero-carousel-dots {
-    bottom: 16px;
+    bottom: 12px;
   }
 }
 
@@ -678,15 +675,16 @@ a:focus-visible {
   .hero-slide {
     min-height: 0;
   }
-  .hero-carousel .hero-actions {
-    width: 100%;
+  .home-hero-actions {
+    max-width: none;
   }
-  .hero-carousel .btn-primary {
+  .home-hero-actions .btn {
     width: 100%;
+    min-height: 52px;
   }
   .hero-carousel-btn {
-    width: 38px;
-    height: 38px;
+    width: 34px;
+    height: 34px;
     font-size: 1.7rem;
   }
   .hero-slide img {
