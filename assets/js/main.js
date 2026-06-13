@@ -3,17 +3,42 @@ const navToggle = document.querySelector(".nav-toggle");
 const siteNav = document.querySelector(".site-nav");
 
 if (navToggle && siteNav) {
+  const desktopNavQuery = window.matchMedia("(min-width: 921px)");
+
+  const closeMenu = ({ restoreFocus = false } = {}) => {
+    if (!siteNav.classList.contains("is-open")) return;
+    siteNav.classList.remove("is-open");
+    navToggle.setAttribute("aria-expanded", "false");
+    if (restoreFocus) navToggle.focus();
+  };
+
   navToggle.addEventListener("click", () => {
-    const isOpen = siteNav.classList.toggle("is-open");
-    navToggle.setAttribute("aria-expanded", String(isOpen));
+    const shouldOpen = !siteNav.classList.contains("is-open");
+    siteNav.classList.toggle("is-open", shouldOpen);
+    navToggle.setAttribute("aria-expanded", String(shouldOpen));
   });
 
   siteNav.addEventListener("click", (event) => {
     if (event.target.matches("a")) {
-      siteNav.classList.remove("is-open");
-      navToggle.setAttribute("aria-expanded", "false");
+      closeMenu();
     }
   });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      closeMenu({ restoreFocus: true });
+    }
+  });
+
+  const closeMenuOnDesktop = () => {
+    if (desktopNavQuery.matches) closeMenu();
+  };
+
+  if (typeof desktopNavQuery.addEventListener === "function") {
+    desktopNavQuery.addEventListener("change", closeMenuOnDesktop);
+  } else {
+    desktopNavQuery.addListener(closeMenuOnDesktop);
+  }
 }
 
 const currentPage = body.dataset.page;
@@ -31,97 +56,125 @@ if (heroCarousel) {
   const nextButton = heroCarousel.querySelector(".hero-carousel-next");
   const dotsWrapper = heroCarousel.querySelector(".hero-carousel-dots");
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-  let activeIndex = slides.findIndex((slide) => slide.classList.contains("is-active"));
-  let autoplayId;
-  let isPointerInside = false;
-  let isFocusInside = false;
+  if (slides.length && dotsWrapper) {
+    let activeIndex = slides.findIndex((slide) => slide.classList.contains("is-active"));
+    let autoplayId;
+    let isPointerInside = false;
+    let isFocusInside = false;
+    let touchStartX = 0;
+    let touchStartY = 0;
 
-  if (activeIndex < 0) activeIndex = 0;
+    if (activeIndex < 0) activeIndex = 0;
 
-  const dots = slides.map((slide, index) => {
-    slide.setAttribute("aria-hidden", String(index !== activeIndex));
+    const dots = slides.map((slide, index) => {
+      slide.setAttribute("aria-hidden", String(index !== activeIndex));
 
-    const dot = document.createElement("button");
-    dot.type = "button";
-    dot.setAttribute("aria-label", `Afficher la photo ${index + 1}`);
-    dot.addEventListener("click", () => {
-      showSlide(index);
-      restartAutoplay();
+      const dot = document.createElement("button");
+      dot.type = "button";
+      dot.setAttribute("aria-label", `Afficher la photo ${index + 1}`);
+      dot.addEventListener("click", () => {
+        showSlide(index);
+        restartAutoplay();
+      });
+      dotsWrapper.appendChild(dot);
+      return dot;
     });
-    dotsWrapper.appendChild(dot);
-    return dot;
-  });
 
-  const updateDots = () => {
-    dots.forEach((dot, index) => {
-      const isActive = index === activeIndex;
-      dot.classList.toggle("is-active", isActive);
-      dot.setAttribute("aria-current", isActive ? "true" : "false");
-    });
-  };
+    const updateDots = () => {
+      dots.forEach((dot, index) => {
+        const isActive = index === activeIndex;
+        dot.classList.toggle("is-active", isActive);
+        dot.setAttribute("aria-current", isActive ? "true" : "false");
+        dot.setAttribute("aria-pressed", String(isActive));
+      });
+    };
 
-  function showSlide(index) {
-    activeIndex = (index + slides.length) % slides.length;
-    slides.forEach((slide, slideIndex) => {
-      const isActive = slideIndex === activeIndex;
-      slide.classList.toggle("is-active", isActive);
-      slide.setAttribute("aria-hidden", String(!isActive));
-    });
-    updateDots();
-  }
-
-  const nextSlide = () => showSlide(activeIndex + 1);
-  const previousSlide = () => showSlide(activeIndex - 1);
-
-  const stopAutoplay = () => {
-    if (autoplayId) {
-      window.clearInterval(autoplayId);
-      autoplayId = undefined;
+    function showSlide(index) {
+      activeIndex = (index + slides.length) % slides.length;
+      slides.forEach((slide, slideIndex) => {
+        const isActive = slideIndex === activeIndex;
+        slide.classList.toggle("is-active", isActive);
+        slide.setAttribute("aria-hidden", String(!isActive));
+      });
+      updateDots();
     }
-  };
 
-  const startAutoplay = () => {
-    if (reduceMotion.matches || slides.length < 2 || isPointerInside || isFocusInside) return;
-    stopAutoplay();
-    autoplayId = window.setInterval(nextSlide, 5000);
-  };
+    const nextSlide = () => showSlide(activeIndex + 1);
+    const previousSlide = () => showSlide(activeIndex - 1);
 
-  function restartAutoplay() {
-    stopAutoplay();
+    const stopAutoplay = () => {
+      if (autoplayId) {
+        window.clearInterval(autoplayId);
+        autoplayId = undefined;
+      }
+    };
+
+    const startAutoplay = () => {
+      if (reduceMotion.matches || slides.length < 2 || isPointerInside || isFocusInside) return;
+      stopAutoplay();
+      autoplayId = window.setInterval(nextSlide, 5000);
+    };
+
+    function restartAutoplay() {
+      stopAutoplay();
+      startAutoplay();
+    }
+
+    if (previousButton && nextButton && slides.length > 1) {
+      previousButton.addEventListener("click", () => {
+        previousSlide();
+        restartAutoplay();
+      });
+      nextButton.addEventListener("click", () => {
+        nextSlide();
+        restartAutoplay();
+      });
+    }
+
+    heroCarousel.addEventListener("mouseenter", () => {
+      isPointerInside = true;
+      stopAutoplay();
+    });
+    heroCarousel.addEventListener("mouseleave", () => {
+      isPointerInside = false;
+      startAutoplay();
+    });
+    heroCarousel.addEventListener("focusin", () => {
+      isFocusInside = true;
+      stopAutoplay();
+    });
+    heroCarousel.addEventListener("focusout", (event) => {
+      isFocusInside = heroCarousel.contains(event.relatedTarget);
+      startAutoplay();
+    });
+    heroCarousel.addEventListener("touchstart", (event) => {
+      const touch = event.changedTouches[0];
+      touchStartX = touch.clientX;
+      touchStartY = touch.clientY;
+      stopAutoplay();
+    }, { passive: true });
+    heroCarousel.addEventListener("touchend", (event) => {
+      const touch = event.changedTouches[0];
+      const deltaX = touch.clientX - touchStartX;
+      const deltaY = touch.clientY - touchStartY;
+
+      if (Math.abs(deltaX) > 40 && Math.abs(deltaX) > Math.abs(deltaY)) {
+        if (deltaX < 0) nextSlide();
+        else previousSlide();
+      }
+
+      restartAutoplay();
+    }, { passive: true });
+
+    if (typeof reduceMotion.addEventListener === "function") {
+      reduceMotion.addEventListener("change", restartAutoplay);
+    } else {
+      reduceMotion.addListener(restartAutoplay);
+    }
+
+    showSlide(activeIndex);
     startAutoplay();
   }
-
-  if (previousButton && nextButton && slides.length > 1) {
-    previousButton.addEventListener("click", () => {
-      previousSlide();
-      restartAutoplay();
-    });
-    nextButton.addEventListener("click", () => {
-      nextSlide();
-      restartAutoplay();
-    });
-  }
-
-  heroCarousel.addEventListener("mouseenter", () => {
-    isPointerInside = true;
-    stopAutoplay();
-  });
-  heroCarousel.addEventListener("mouseleave", () => {
-    isPointerInside = false;
-    startAutoplay();
-  });
-  heroCarousel.addEventListener("focusin", () => {
-    isFocusInside = true;
-    stopAutoplay();
-  });
-  heroCarousel.addEventListener("focusout", (event) => {
-    isFocusInside = heroCarousel.contains(event.relatedTarget);
-    startAutoplay();
-  });
-  reduceMotion.addEventListener("change", restartAutoplay);
-
-  showSlide(activeIndex);
-  startAutoplay();
 }
 
 const galleryButtons = document.querySelectorAll(".gallery-item");
@@ -130,23 +183,40 @@ if (galleryButtons.length) {
   lightbox.className = "lightbox";
   lightbox.setAttribute("role", "dialog");
   lightbox.setAttribute("aria-modal", "true");
-  lightbox.innerHTML = '<button type="button" aria-label="Fermer la photo">×</button><img alt="">';
+  lightbox.setAttribute("aria-label", "Photo agrandie");
+
+  const closeButton = document.createElement("button");
+  closeButton.type = "button";
+  closeButton.setAttribute("aria-label", "Fermer la photo");
+  closeButton.textContent = "×";
+
+  const lightboxImage = document.createElement("img");
+  lightboxImage.alt = "";
+
+  lightbox.append(closeButton, lightboxImage);
   document.body.appendChild(lightbox);
 
-  const lightboxImage = lightbox.querySelector("img");
-  const closeButton = lightbox.querySelector("button");
+  let activeLightboxTrigger;
 
-  const closeLightbox = () => {
+  const closeLightbox = ({ restoreFocus = true } = {}) => {
+    if (!lightbox.classList.contains("is-open")) return;
     lightbox.classList.remove("is-open");
+    body.classList.remove("is-lightbox-open");
     lightboxImage.removeAttribute("src");
+    lightboxImage.alt = "";
+    if (restoreFocus && activeLightboxTrigger) activeLightboxTrigger.focus();
+    activeLightboxTrigger = undefined;
   };
 
   galleryButtons.forEach((button) => {
     button.addEventListener("click", () => {
       const image = button.querySelector("img");
-      lightboxImage.src = image.src;
+      if (!image) return;
+      activeLightboxTrigger = button;
+      lightboxImage.src = image.currentSrc || image.src;
       lightboxImage.alt = image.alt;
       lightbox.classList.add("is-open");
+      body.classList.add("is-lightbox-open");
       closeButton.focus();
     });
   });
@@ -156,6 +226,15 @@ if (galleryButtons.length) {
     if (event.target === lightbox) closeLightbox();
   });
   document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && lightbox.classList.contains("is-open")) closeLightbox();
+    if (!lightbox.classList.contains("is-open")) return;
+
+    if (event.key === "Escape") {
+      closeLightbox();
+    }
+
+    if (event.key === "Tab") {
+      event.preventDefault();
+      closeButton.focus();
+    }
   });
 }

@@ -4,16 +4,19 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="referrer" content="strict-origin-when-cross-origin">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; form-action https://formspree.io; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; script-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; form-action https://formspree.io; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; script-src 'self'; base-uri 'self'; object-src 'none';">
   <title>Événements au château | Château de Monlet</title>
   <meta name="description" content="Organiser un événement privé, professionnel, un spectacle, une résidence artistique ou un shooting au Château de Monlet.">
   <meta name="robots" content="index,follow">
+  <meta property="og:locale" content="fr_FR">
+  <meta property="og:site_name" content="Château de Monlet">
   <meta property="og:title" content="Événements au Château de Monlet">
   <meta property="og:description" content="Un château pour événement à Monlet, adapté aux formats privés, professionnels et artistiques.">
-  <meta property="og:image" content="assets/images/1000017908.jpg">
+  <meta property="og:image" content="https://www.chateau-monlet.fr/assets/images/1000017908.jpg">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://www.chateau-de-monlet.fr/evenements.html">
-  <link rel="canonical" href="https://www.chateau-de-monlet.fr/evenements.html">
+  <meta property="og:url" content="https://www.chateau-monlet.fr/evenements.html">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="canonical" href="https://www.chateau-monlet.fr/evenements.html">
   <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 <body data-page="evenements">
@@ -26,7 +29,7 @@
     <a class="header-cta" href="contact.html">Demander un devis</a>
   </header>
   <main>
-    <section class="hero hero-inner" style="--hero-image:url('assets/images/1000017908.jpg')"><div class="hero-content"><p class="eyebrow">Privé, professionnel, artistique</p><h1>Événements au Château de Monlet</h1><p>Un lieu expressif pour imaginer une réception, une rencontre ou une création.</p></div></section>
+    <section class="hero hero-inner" style="--hero-image:image-set(url('/assets/images/1000017908.webp') type('image/webp'), url('/assets/images/1000017908.jpg') type('image/jpeg'))"><div class="hero-content"><p class="eyebrow">Privé, professionnel, artistique</p><h1>Événements au Château de Monlet</h1><p>Un lieu expressif pour imaginer une réception, une rencontre ou une création.</p></div></section>
     <section class="section">
       <div class="section-heading"><p class="eyebrow">Idées d'utilisation</p><h2>Des formats à composer selon votre projet</h2></div>
       <div class="card-grid two">
@@ -38,7 +41,10 @@
     </section>
     <section class="split-section muted">
       <div class="split-copy"><p class="eyebrow">Accompagnement</p><h2>Un cadre haut de gamme, une approche accessible</h2><p>Le Château de Monlet reçoit chaque demande avec prudence et précision : type d'événement, date souhaitée, durée, nombre de personnes, besoin d'hébergement et éventuelles contraintes techniques.</p><p>Cette première V1 du site prépare la prise de contact afin de valider les conditions réelles avec le propriétaire.</p></div>
-      <img src="assets/images/1000042224.jpg" alt="Détail d'ambiance au Château de Monlet" width="1536" height="2048" loading="lazy">
+      <picture>
+        <source srcset="assets/images/1000042224.webp" type="image/webp">
+        <img src="assets/images/1000042224.jpg" alt="Détail d'ambiance au Château de Monlet" width="1536" height="2048" loading="lazy" decoding="async">
+      </picture>
     </section>
     <section class="cta-band"><p class="eyebrow">Votre événement</p><h2>Racontez-nous le format que vous imaginez.</h2><a class="btn btn-primary" href="contact.html">Contacter le château</a></section>
   </main>
