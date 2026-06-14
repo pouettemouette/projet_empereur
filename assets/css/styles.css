@@ -200,6 +200,11 @@ a { color: inherit; }
   background: #e9e0d4;
   touch-action: pan-y;
 }
+@media (min-width: 1025px) {
+  .hero-carousel {
+    height: clamp(420px, 36vw, 560px);
+  }
+}
 .hero-carousel::after {
   display: none;
 }
