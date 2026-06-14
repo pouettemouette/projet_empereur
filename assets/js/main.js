@@ -22,7 +22,10 @@ const trapFocus = (event, container) => {
   const first = focusable[0];
   const last = focusable[focusable.length - 1];
 
-  if (event.shiftKey && document.activeElement === first) {
+  if (!container.contains(document.activeElement)) {
+    event.preventDefault();
+    (event.shiftKey ? last : first).focus();
+  } else if (event.shiftKey && document.activeElement === first) {
     event.preventDefault();
     last.focus();
   } else if (!event.shiftKey && document.activeElement === last) {
@@ -109,21 +112,33 @@ const stickyCta = document.querySelector(".mobile-sticky-cta");
 if (stickyCta) {
   const blockers = [
     document.querySelector(".site-footer"),
-    document.querySelector(".contact-layout")
+    document.querySelector(".contact-layout"),
+    ...document.querySelectorAll(".cta-band")
   ].filter(Boolean);
+  const visibleBlockers = new Set();
   let isBlocked = false;
 
+  const isInViewport = (element) => {
+    const rect = element.getBoundingClientRect();
+    return rect.top < window.innerHeight && rect.bottom > 0;
+  };
+
   const updateStickyCta = () => {
-    const shouldShow = window.scrollY > 160 && !isBlocked;
+    const hasVisibleBlocker = isBlocked || blockers.some(isInViewport);
+    const shouldShow = window.scrollY > 160 && !hasVisibleBlocker;
     stickyCta.classList.toggle("is-visible", shouldShow);
     stickyCta.setAttribute("aria-hidden", String(!shouldShow));
   };
 
   if ("IntersectionObserver" in window && blockers.length) {
     const observer = new IntersectionObserver((entries) => {
-      isBlocked = entries.some((entry) => entry.isIntersecting);
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) visibleBlockers.add(entry.target);
+        else visibleBlockers.delete(entry.target);
+      });
+      isBlocked = visibleBlockers.size > 0;
       updateStickyCta();
-    }, { rootMargin: "0px 0px -12% 0px", threshold: 0.01 });
+    }, { rootMargin: "0px", threshold: 0.01 });
     blockers.forEach((element) => observer.observe(element));
   }
 
@@ -321,6 +336,7 @@ if (galleryButtons.length) {
   lightbox.setAttribute("role", "dialog");
   lightbox.setAttribute("aria-modal", "true");
   lightbox.setAttribute("aria-label", "Photo agrandie");
+  lightbox.setAttribute("aria-hidden", "true");
 
   const closeButton = document.createElement("button");
   closeButton.className = "lightbox-close";
@@ -387,6 +403,7 @@ if (galleryButtons.length) {
     activeLightboxTrigger = trigger;
     updateLightbox();
     lightbox.classList.add("is-open");
+    lightbox.setAttribute("aria-hidden", "false");
     body.classList.add("is-lightbox-open");
 
     const hasSeveralImages = images.length > 1;
@@ -398,6 +415,7 @@ if (galleryButtons.length) {
   const closeLightbox = ({ restoreFocus = true } = {}) => {
     if (!lightbox.classList.contains("is-open")) return;
     lightbox.classList.remove("is-open");
+    lightbox.setAttribute("aria-hidden", "true");
     body.classList.remove("is-lightbox-open");
     lightboxImage.removeAttribute("src");
     lightboxImage.alt = "";

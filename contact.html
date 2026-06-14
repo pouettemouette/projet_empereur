@@ -10,7 +10,7 @@
   <link rel="manifest" href="/site.webmanifest">
   <meta name="theme-color" content="#6E1F2A">
   <meta name="referrer" content="strict-origin-when-cross-origin">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; form-action https://formspree.io; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; script-src 'self'; base-uri 'self'; object-src 'none';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; form-action https://formspree.io; img-src 'self' data: https:; style-src 'self'; script-src 'self' 'sha256-EzfqG/44iXcrrWK1rKTbBwAZj9Y7cn23iqyDD9mTN/I='; base-uri 'self'; object-src 'none';">
   <title>Contact et demande de devis | Château de Monlet</title>
   <meta name="description" content="Contacter le Château de Monlet pour une location de salle, un spectacle, un événement privé ou professionnel, ou une demande d'hébergement.">
   <meta name="robots" content="index,follow">
@@ -42,7 +42,7 @@
     <section class="contact-layout">
       <form action="https://formspree.io/f/mjgdkgwz" method="POST" class="contact-form">
         <input type="hidden" name="_subject" value="Nouvelle demande depuis le site Château de Monlet">
-        <input type="text" name="_gotcha" style="display:none">
+        <input class="form-honeypot" type="text" name="_gotcha">
         <input type="hidden" name="_next" value="https://www.chateau-monlet.fr/merci.html">
         <div class="form-row"><label for="name">Nom</label><input id="name" name="nom" type="text" autocomplete="name" required></div>
         <div class="form-row"><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" required></div>

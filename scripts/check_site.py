@@ -125,6 +125,21 @@ def validate_html(html_file: Path, errors: list[str]) -> None:
         scan_json_for_placeholders(data, "jsonld", html_file.name, errors)
 
     for tag, attrs in parser.tags:
+        if "style" in attrs:
+            fail(f"Inline style attribute in {html_file.name}: <{tag}>", errors)
+
+        if tag == "meta" and attrs.get("http-equiv", "").lower() == "content-security-policy":
+            unsafe_inline = "'unsafe-" + "inline'"
+            if unsafe_inline in attrs.get("content", ""):
+                fail(f"Unsafe inline CSP directive in {html_file.name}", errors)
+
+        if (
+            tag == "script"
+            and "src" not in attrs
+            and attrs.get("type", "").lower() != "application/ld+json"
+        ):
+            fail(f"Unexpected inline script in {html_file.name}", errors)
+
         if tag == "form" and attrs.get("action") != FORMSPREE_ENDPOINT:
             fail(f"Unexpected form action in {html_file.name}: {attrs.get('action')}", errors)
 

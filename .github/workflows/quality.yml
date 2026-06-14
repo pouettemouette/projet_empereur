@@ -33,3 +33,17 @@ jobs:
 
       - name: Validate JavaScript syntax
         run: node --check assets/js/main.js
+
+      - name: Validate Lighthouse config syntax
+        run: node --check .lighthouserc.js
+
+      - name: Run Lighthouse CI
+        run: npx --yes @lhci/cli autorun
+
+      - name: Upload Lighthouse reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-reports
+          path: lhci_reports
+          if-no-files-found: ignore

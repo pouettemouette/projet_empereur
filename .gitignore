@@ -7,5 +7,7 @@ build/
 *.rar
 *.7z
 *.log
+.lighthouseci/
+lhci_reports/
 .DS_Store
 Thumbs.db
