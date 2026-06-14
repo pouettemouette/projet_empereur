@@ -115,6 +115,22 @@ a { color: inherit; }
 .mobile-sticky-cta {
   display: none;
 }
+.header-cta {
+  display: none;
+}
+.site-nav .nav-cta {
+  display: inline-flex;
+}
+@media (min-width: 769px) {
+  .mobile-sticky-cta,
+  .js-enabled .mobile-sticky-cta,
+  .js-enabled .mobile-sticky-cta.is-visible {
+    display: none !important;
+  }
+  body:not(.js-enabled) {
+    padding-bottom: 0;
+  }
+}
 .nav-toggle {
   display: none;
   width: 44px;
@@ -428,6 +444,28 @@ h3 { font-size: 1.45rem; }
   text-align: center;
 }
 .page-intro h1 { color: var(--wine); }
+body[data-page="contact"] .page-intro {
+  width: min(calc(100% - 2rem), 1100px);
+  max-width: none;
+  padding: clamp(4rem, 8vw, 7rem) 0;
+  margin-inline: auto;
+}
+body[data-page="contact"] .page-intro .eyebrow {
+  margin-bottom: 8px;
+}
+body[data-page="contact"] .page-intro h1 {
+  max-width: 18ch;
+  margin: 0 auto clamp(1rem, 2vw, 1.25rem);
+  font-size: clamp(3rem, 6vw, 6rem);
+  line-height: .95;
+  text-wrap: balance;
+  overflow-wrap: normal;
+  word-break: normal;
+}
+body[data-page="contact"] .page-intro p:not(.eyebrow) {
+  max-width: 760px;
+  margin-inline: auto;
+}
 .legal-content {
   max-width: 900px;
   margin: 0 auto;
@@ -669,23 +707,12 @@ a:focus-visible {
 .site-footer a:hover { color: var(--gold); }
 
 @media (max-width: 920px) {
-  body:not(.js-enabled) { padding-bottom: calc(84px + env(safe-area-inset-bottom)); }
   .js-enabled .nav-toggle { display: block; }
   .header-cta { display: none; }
   .nav-cta {
     display: inline-flex;
     width: 100%;
     margin-top: 4px;
-  }
-  .mobile-sticky-cta {
-    position: fixed;
-    left: 16px;
-    right: 16px;
-    bottom: calc(14px + env(safe-area-inset-bottom));
-    z-index: 55;
-    display: flex;
-    min-height: 52px;
-    box-shadow: 0 14px 34px rgba(36, 28, 23, .24);
   }
   body:not(.js-enabled) .site-header {
     align-items: flex-start;
@@ -751,6 +778,17 @@ a:focus-visible {
 }
 
 @media (max-width: 768px) {
+  body:not(.js-enabled) { padding-bottom: calc(84px + env(safe-area-inset-bottom)); }
+  .mobile-sticky-cta {
+    position: fixed;
+    left: 16px;
+    right: 16px;
+    bottom: calc(14px + env(safe-area-inset-bottom));
+    z-index: 55;
+    display: flex;
+    min-height: 52px;
+    box-shadow: 0 14px 34px rgba(36, 28, 23, .24);
+  }
   .home-carousel {
     width: calc(100% - 1.5rem);
     aspect-ratio: 4 / 3;
