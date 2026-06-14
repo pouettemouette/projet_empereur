@@ -336,6 +336,7 @@ if (galleryButtons.length) {
   lightbox.setAttribute("role", "dialog");
   lightbox.setAttribute("aria-modal", "true");
   lightbox.setAttribute("aria-label", "Photo agrandie");
+  lightbox.setAttribute("aria-describedby", "lightbox-counter lightbox-caption");
   lightbox.setAttribute("aria-hidden", "true");
 
   const closeButton = document.createElement("button");
@@ -361,12 +362,23 @@ if (galleryButtons.length) {
 
   const lightboxImage = document.createElement("img");
   lightboxImage.alt = "";
+  lightboxImage.decoding = "async";
 
   const counter = document.createElement("p");
+  counter.id = "lightbox-counter";
   counter.className = "lightbox-counter";
   counter.setAttribute("aria-live", "polite");
+  counter.setAttribute("aria-atomic", "true");
 
-  frame.append(lightboxImage, counter);
+  const caption = document.createElement("p");
+  caption.id = "lightbox-caption";
+  caption.className = "lightbox-caption";
+
+  const meta = document.createElement("div");
+  meta.className = "lightbox-meta";
+  meta.append(counter, caption);
+
+  frame.append(lightboxImage, meta);
   lightbox.append(closeButton, previousButton, frame, nextButton);
   document.body.appendChild(lightbox);
 
@@ -381,20 +393,62 @@ if (galleryButtons.length) {
 
   let activeLightboxTrigger;
   let activeIndex = 0;
-  let touchStartX = 0;
-  let touchStartY = 0;
+  let activePointerId;
+  let scrollPosition = 0;
+  let swipeStartX = 0;
+  let swipeStartY = 0;
+  const preloadedLightboxUrls = new Set();
+
+  const hasCaption = (text) => {
+    const normalized = text.trim();
+    return normalized && !/^(image|photo|photos?|galerie)$/i.test(normalized);
+  };
+
+  const lockLightboxScroll = () => {
+    scrollPosition = window.scrollY || document.documentElement.scrollTop;
+    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+    body.classList.add("is-lightbox-open");
+    body.style.position = "fixed";
+    body.style.top = `-${scrollPosition}px`;
+    body.style.left = "0";
+    body.style.right = "0";
+    body.style.width = "100%";
+    if (scrollbarWidth > 0) body.style.paddingRight = `${scrollbarWidth}px`;
+  };
+
+  const unlockLightboxScroll = () => {
+    const previousScrollBehavior = document.documentElement.style.scrollBehavior;
+    body.classList.remove("is-lightbox-open");
+    body.style.removeProperty("position");
+    body.style.removeProperty("top");
+    body.style.removeProperty("left");
+    body.style.removeProperty("right");
+    body.style.removeProperty("width");
+    body.style.removeProperty("padding-right");
+    document.documentElement.style.scrollBehavior = "auto";
+    window.scrollTo(0, scrollPosition);
+    document.documentElement.style.scrollBehavior = previousScrollBehavior;
+  };
+
+  const preloadLightboxImage = (src) => {
+    if (!src || preloadedLightboxUrls.has(src)) return;
+    preloadedLightboxUrls.add(src);
+    preloadImage(src);
+  };
 
   const preloadLightboxNeighbors = () => {
     if (images.length < 2) return;
-    preloadImage(images[(activeIndex + 1) % images.length].src);
-    preloadImage(images[(activeIndex - 1 + images.length) % images.length].src);
+    preloadLightboxImage(images[(activeIndex + 1) % images.length].src);
+    preloadLightboxImage(images[(activeIndex - 1 + images.length) % images.length].src);
   };
 
   const updateLightbox = () => {
     const image = images[activeIndex];
-    lightboxImage.src = image.src;
+    if (lightboxImage.src !== image.src) lightboxImage.src = image.src;
     lightboxImage.alt = image.alt;
     counter.textContent = `${activeIndex + 1} / ${images.length}`;
+    caption.textContent = hasCaption(image.alt) ? image.alt : "";
+    caption.hidden = !caption.textContent;
     preloadLightboxNeighbors();
   };
 
@@ -404,7 +458,7 @@ if (galleryButtons.length) {
     updateLightbox();
     lightbox.classList.add("is-open");
     lightbox.setAttribute("aria-hidden", "false");
-    body.classList.add("is-lightbox-open");
+    lockLightboxScroll();
 
     const hasSeveralImages = images.length > 1;
     previousButton.hidden = !hasSeveralImages;
@@ -416,10 +470,22 @@ if (galleryButtons.length) {
     if (!lightbox.classList.contains("is-open")) return;
     lightbox.classList.remove("is-open");
     lightbox.setAttribute("aria-hidden", "true");
-    body.classList.remove("is-lightbox-open");
     lightboxImage.removeAttribute("src");
     lightboxImage.alt = "";
-    if (restoreFocus && activeLightboxTrigger) activeLightboxTrigger.focus();
+    caption.textContent = "";
+    caption.hidden = true;
+    unlockLightboxScroll();
+    if (restoreFocus && activeLightboxTrigger) {
+      try {
+        activeLightboxTrigger.focus({ preventScroll: true });
+      } catch (error) {
+        activeLightboxTrigger.focus();
+      }
+      const previousScrollBehavior = document.documentElement.style.scrollBehavior;
+      document.documentElement.style.scrollBehavior = "auto";
+      window.scrollTo(0, scrollPosition);
+      document.documentElement.style.scrollBehavior = previousScrollBehavior;
+    }
     activeLightboxTrigger = undefined;
   };
 
@@ -429,7 +495,10 @@ if (galleryButtons.length) {
   };
 
   galleryButtons.forEach((button, index) => {
-    button.addEventListener("click", () => openLightbox(index, button));
+    button.addEventListener("click", (event) => {
+      event.preventDefault();
+      openLightbox(index, button);
+    });
   });
 
   closeButton.addEventListener("click", closeLightbox);
@@ -440,23 +509,55 @@ if (galleryButtons.length) {
     if (event.target === lightbox) closeLightbox();
   });
 
-  lightbox.addEventListener("touchstart", (event) => {
-    const touch = event.changedTouches[0];
-    touchStartX = touch.clientX;
-    touchStartY = touch.clientY;
-  }, { passive: true });
-
-  lightbox.addEventListener("touchend", (event) => {
+  const handleSwipe = (deltaX, deltaY) => {
     if (images.length < 2) return;
-    const touch = event.changedTouches[0];
-    const deltaX = touch.clientX - touchStartX;
-    const deltaY = touch.clientY - touchStartY;
-
-    if (Math.abs(deltaX) > 45 && Math.abs(deltaX) > Math.abs(deltaY)) {
+    if (Math.abs(deltaX) > 52 && Math.abs(deltaX) > Math.abs(deltaY) * 1.25) {
       if (deltaX < 0) showLightboxImage(activeIndex + 1);
       else showLightboxImage(activeIndex - 1);
     }
-  }, { passive: true });
+  };
+
+  if (window.PointerEvent) {
+    lightbox.addEventListener("pointerdown", (event) => {
+      if (!lightbox.classList.contains("is-open") || event.target.closest("button")) return;
+      activePointerId = event.pointerId;
+      swipeStartX = event.clientX;
+      swipeStartY = event.clientY;
+      try {
+        if (lightbox.setPointerCapture) lightbox.setPointerCapture(activePointerId);
+      } catch (error) {
+        activePointerId = event.pointerId;
+      }
+    });
+
+    lightbox.addEventListener("pointerup", (event) => {
+      if (activePointerId !== event.pointerId) return;
+      handleSwipe(event.clientX - swipeStartX, event.clientY - swipeStartY);
+      try {
+        if (lightbox.releasePointerCapture && lightbox.hasPointerCapture(activePointerId)) {
+          lightbox.releasePointerCapture(activePointerId);
+        }
+      } catch (error) {
+        activePointerId = undefined;
+      }
+      activePointerId = undefined;
+    });
+
+    lightbox.addEventListener("pointercancel", () => {
+      activePointerId = undefined;
+    });
+  } else {
+    lightbox.addEventListener("touchstart", (event) => {
+      const touch = event.changedTouches[0];
+      swipeStartX = touch.clientX;
+      swipeStartY = touch.clientY;
+    }, { passive: true });
+
+    lightbox.addEventListener("touchend", (event) => {
+      const touch = event.changedTouches[0];
+      handleSwipe(touch.clientX - swipeStartX, touch.clientY - swipeStartY);
+    }, { passive: true });
+  }
 
   document.addEventListener("keydown", (event) => {
     if (!lightbox.classList.contains("is-open")) return;

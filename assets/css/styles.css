@@ -23,6 +23,10 @@ body {
 }
 body.is-lightbox-open,
 body.is-menu-open { overflow: hidden; }
+body.is-lightbox-open {
+  overscroll-behavior: contain;
+  touch-action: none;
+}
 img { display: block; max-width: 100%; height: auto; }
 picture { display: block; max-width: 100%; }
 a { color: inherit; }
@@ -529,13 +533,15 @@ body[data-page="contact"] .page-intro p:not(.eyebrow) {
 }
 
 .gallery-grid {
-  width: min(1180px, calc(100% - 40px));
+  width: min(1240px, calc(100% - clamp(32px, 6vw, 72px)));
   margin: 0 auto clamp(62px, 8vw, 100px);
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: clamp(12px, 2vw, 18px);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(.75rem, 2vw, 1.5rem);
 }
 .gallery-item {
+  display: block;
+  width: 100%;
   min-height: 0;
   min-width: 0;
   aspect-ratio: 1 / 1;
@@ -547,8 +553,16 @@ body[data-page="contact"] .page-intro p:not(.eyebrow) {
   cursor: zoom-in;
   touch-action: manipulation;
 }
+.gallery-item picture {
+  width: 100%;
+  height: 100%;
+}
 .gallery-item img {
+  display: block;
+  width: 100%;
+  height: 100%;
   aspect-ratio: 1 / 1;
+  object-fit: cover;
   transition: transform .25s ease, filter .25s ease;
 }
 @media (hover: hover) {
@@ -559,6 +573,7 @@ body[data-page="contact"] .page-intro p:not(.eyebrow) {
 }
 .gallery-item:focus-visible {
   border-color: rgba(176, 138, 69, .85);
+  outline-offset: 4px;
 }
 .gallery-item:focus-visible img {
   transform: scale(1.025);
@@ -570,33 +585,61 @@ body[data-page="contact"] .page-intro p:not(.eyebrow) {
   z-index: 60;
   display: none;
   place-items: center;
-  padding: clamp(18px, 4vw, 52px);
+  padding:
+    calc(clamp(16px, 4vw, 52px) + env(safe-area-inset-top))
+    calc(clamp(16px, 4vw, 52px) + env(safe-area-inset-right))
+    calc(clamp(16px, 4vw, 52px) + env(safe-area-inset-bottom))
+    calc(clamp(16px, 4vw, 52px) + env(safe-area-inset-left));
   background: rgba(20, 15, 12, .88);
-  touch-action: pan-y;
+  overscroll-behavior: contain;
+  touch-action: none;
 }
 .lightbox.is-open { display: grid; }
 .lightbox-frame {
   display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
   justify-items: center;
-  gap: 12px;
-  max-width: min(1120px, 92vw);
+  gap: 14px;
+  width: min(1480px, 100%);
+  max-height: calc(100dvh - 2rem - env(safe-area-inset-top) - env(safe-area-inset-bottom));
 }
 .lightbox img {
-  max-height: 82vh;
-  max-width: min(1120px, 92vw);
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: min(78dvh, calc(100dvh - 130px - env(safe-area-inset-top) - env(safe-area-inset-bottom)));
+  object-fit: contain;
   border-radius: 6px;
   box-shadow: 0 24px 70px rgba(0, 0, 0, .45);
 }
-.lightbox-counter {
-  min-height: 24px;
-  margin: 0;
+.lightbox-meta {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  min-height: 46px;
   color: var(--cream);
+  text-align: center;
+}
+.lightbox-counter {
+  margin: 0;
   font-weight: 700;
+}
+.lightbox-caption {
+  max-width: min(760px, 86vw);
+  margin: 0;
+  color: rgba(255, 249, 240, .84);
+  font-size: .95rem;
+  line-height: 1.4;
+}
+.lightbox-caption:empty {
+  display: none;
 }
 .lightbox button {
   position: absolute;
-  width: 44px;
-  height: 44px;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
   border: 1px solid rgba(255,255,255,.35);
   border-radius: 4px;
   color: var(--cream);
@@ -608,15 +651,21 @@ body[data-page="contact"] .page-intro p:not(.eyebrow) {
   background: rgba(110, 31, 42, .72);
 }
 .lightbox-close {
-  top: 18px;
-  right: 18px;
+  top: calc(16px + env(safe-area-inset-top));
+  right: calc(16px + env(safe-area-inset-right));
 }
 .lightbox-nav {
   top: 50%;
   transform: translateY(-50%);
 }
-.lightbox-prev { left: 18px; }
-.lightbox-next { right: 18px; }
+.lightbox-prev { left: calc(16px + env(safe-area-inset-left)); }
+.lightbox-next { right: calc(16px + env(safe-area-inset-right)); }
+
+@media (max-width: 1180px) {
+  .gallery-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
 
 .contact-layout {
   width: min(1160px, calc(100% - 40px));
@@ -756,9 +805,11 @@ a:focus-visible {
   .site-footer {
     grid-template-columns: 1fr;
   }
-  .gallery-preview,
-  .gallery-grid {
+  .gallery-preview {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .gallery-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
   .room { grid-template-columns: 1fr; }
   .room img { aspect-ratio: 16 / 10; }
@@ -867,6 +918,12 @@ a:focus-visible {
     width: calc(100% - 1rem);
     aspect-ratio: 4 / 3;
     border-radius: 10px;
+  }
+}
+
+@media (max-width: 360px) {
+  .gallery-grid {
+    grid-template-columns: 1fr;
   }
 }
 
