@@ -874,17 +874,38 @@ a:focus-visible {
     text-align: center;
   }
   .hero-introduction h1 {
-    font-size: clamp(2rem, 9vw, 3rem);
-    line-height: 1.15;
+    font-size: clamp(2rem, 8.4vw, 2.65rem);
+    line-height: 1.08;
+    text-wrap: balance;
   }
   .hero-carousel-btn {
     top: 50%;
     bottom: auto;
-    width: 40px;
-    height: 40px;
-    font-size: 1.65rem;
-    opacity: .95;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    background: transparent;
+    font-size: 1.45rem;
+    opacity: .92;
     transform: translateY(-50%);
+  }
+  .hero-carousel-btn:hover {
+    background: transparent;
+    border-color: transparent;
+  }
+  .hero-carousel-btn::before {
+    content: "";
+    position: absolute;
+    inset: 4px;
+    border: 1px solid rgba(255, 249, 240, .5);
+    border-radius: 50%;
+    background: rgba(20, 16, 13, .38);
+    backdrop-filter: blur(4px);
+    pointer-events: none;
+  }
+  .hero-carousel-btn:hover::before {
+    background: rgba(110, 31, 42, .56);
+    border-color: rgba(255, 249, 240, .7);
   }
   .hero-carousel-dots {
     bottom: 12px;
@@ -893,7 +914,11 @@ a:focus-visible {
 
 @media (max-width: 600px) {
   .hero-introduction {
-    padding: 1.5rem 1.25rem 2.75rem;
+    padding: .875rem 1.25rem 2.75rem;
+  }
+  .hero-introduction p:not(.eyebrow) {
+    font-size: clamp(1rem, 4vw, 1.08rem);
+    line-height: 1.55;
   }
   .hero-introduction .hero-actions {
     display: grid;
@@ -902,6 +927,13 @@ a:focus-visible {
   }
   .hero-introduction .hero-actions a {
     width: 100%;
+  }
+  .hero-introduction .btn-light {
+    border-color: rgba(36, 28, 23, .14);
+  }
+  .hero-introduction .btn-light:hover {
+    border-color: rgba(36, 28, 23, .24);
+    background: rgba(255, 249, 240, .98);
   }
 }
 
@@ -913,9 +945,9 @@ a:focus-visible {
     min-height: 0;
   }
   .hero-carousel-btn {
-    width: 40px;
-    height: 40px;
-    font-size: 1.6rem;
+    width: 44px;
+    height: 44px;
+    font-size: 1.42rem;
   }
   .hero-actions,
   .center-actions,
@@ -932,8 +964,8 @@ a:focus-visible {
   .hero-carousel {
     width: calc(100% - 1rem);
     aspect-ratio: 4 / 3;
-    height: clamp(240px, 70vw, 320px);
-    max-height: 320px;
+    height: clamp(230px, 60vw, 280px);
+    max-height: 280px;
     border-radius: 10px;
   }
   .hero-carousel-prev { left: .6rem; }
