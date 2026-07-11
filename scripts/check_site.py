@@ -246,6 +246,26 @@ def validate_404_paths(errors: list[str]) -> None:
                 fail(f"404.html uses non-root {attribute}: {reference}", errors)
 
 
+def validate_css_braces(errors: list[str]) -> None:
+    """Detect unmatched CSS braces while ignoring comments and quoted strings."""
+    for css_file in sorted(ROOT.rglob("*.css")):
+        text = css_file.read_text(encoding="utf-8")
+        cleaned = re.sub(r"/\*.*?\*/", "", text, flags=re.DOTALL)
+        cleaned = re.sub(r'"(?:\\.|[^"\\])*"|\'(?:\\.|[^\'\\])*\'', "", cleaned)
+        depth = 0
+        for line_number, line in enumerate(cleaned.splitlines(), start=1):
+            for character in line:
+                if character == "{":
+                    depth += 1
+                elif character == "}":
+                    depth -= 1
+                    if depth < 0:
+                        fail(f"Unmatched closing CSS brace in {css_file.relative_to(ROOT)}:{line_number}", errors)
+                        depth = 0
+        if depth:
+            fail(f"{depth} unclosed CSS brace(s) in {css_file.relative_to(ROOT)}", errors)
+
+
 def validate_text_patterns(errors: list[str]) -> None:
     official_seen = False
     forbidden = {
@@ -285,6 +305,7 @@ def main() -> int:
     validate_sitemap(errors)
     validate_manifest(errors)
     validate_404_paths(errors)
+    validate_css_braces(errors)
 
     for html_file in sorted(ROOT.glob("*.html")):
         validate_html(html_file, errors)

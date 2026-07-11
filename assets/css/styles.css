@@ -4,7 +4,8 @@
   --ink: #27251F;
   --wine: #701F2D;
   --wine-dark: #4C121D;
-  --gold: #A87932;
+  --gold: #76501F;
+  --gold-on-dark: #E0B66D;
   --gold-ornament: #B08A45;
   --forest: #173D35;
   --cream: #F6F0E5;
@@ -278,7 +279,7 @@ a { color: inherit; }
   text-align: left;
 }
 .hero-introduction .eyebrow {
-  color: #E0B66D;
+  color: var(--gold-on-dark);
 }
 .hero-introduction h1 {
   margin: .5rem 0 1rem;
@@ -445,7 +446,7 @@ h3 { font-size: 1.45rem; }
 }
 .wide { min-height: 240px; }
 .muted { background: var(--forest); color: #fff; }
-.muted .eyebrow { color: #E0B66D; }
+.muted .eyebrow { color: var(--gold-on-dark); }
 
 .split-section {
   display: grid;
@@ -818,7 +819,6 @@ a:focus-visible {
 .request-steps strong,
 .request-steps span { display: block; }
 .request-steps span { margin-top: 3px; font-size: .93rem; line-height: 1.45; }
-}
 
 .site-footer {
   display: grid;
@@ -836,7 +836,7 @@ a:focus-visible {
   gap: 0 18px;
 }
 .site-footer a { display: flex; align-items: center; min-height: 44px; color: #fff; text-decoration: none; }
-.site-footer a:hover { color: var(--gold); }
+.site-footer a:hover { color: var(--gold-on-dark); }
 
 @media (max-width: 920px) {
   .js-enabled .nav-toggle { display: block; }
