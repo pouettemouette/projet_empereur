@@ -2,7 +2,8 @@
   --stone: #F5EFE6;
   --ink: #241C17;
   --wine: #6E1F2A;
-  --gold: #B08A45;
+  --gold: #8D6428;
+  --gold-ornament: #B08A45;
   --green: #263D2B;
   --cream: #FFF9F0;
   --line: rgba(36, 28, 23, .16);
@@ -129,7 +130,7 @@ a { color: inherit; }
   .mobile-sticky-cta,
   .js-enabled .mobile-sticky-cta,
   .js-enabled .mobile-sticky-cta.is-visible {
-    display: none !important;
+    display: none;
   }
   body:not(.js-enabled) {
     padding-bottom: 0;
@@ -184,6 +185,11 @@ a { color: inherit; }
   .hero-hebergements {
     --hero-image: image-set(url("/assets/images/1000017905.webp") type("image/webp"), url("/assets/images/1000017905.jpg") type("image/jpeg"));
   }
+}
+@media (max-width: 600px) {
+  .hero-salle { --hero-image: url("/assets/images/1000022111-480.webp"); }
+  .hero-evenements { --hero-image: url("/assets/images/1000017908-480.webp"); }
+  .hero-hebergements { --hero-image: url("/assets/images/1000017905-480.webp"); }
 }
 .hero-inner { min-height: 0; }
 .hero-content {

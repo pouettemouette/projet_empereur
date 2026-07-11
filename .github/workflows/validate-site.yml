@@ -1,0 +1,24 @@
+name: Validate static site
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "lts/*"
+      - name: Validate site files
+        run: python scripts/check_site.py
+      - name: Check JavaScript syntax
+        run: node --check assets/js/main.js

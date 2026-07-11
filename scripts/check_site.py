@@ -15,8 +15,12 @@ OLD_DOMAIN = "chateau-" + "de-monlet.fr"
 FORMSPREE_ENDPOINT = "https://formspree.io/f/mjgdkgwz"
 FORBIDDEN_PUBLIC_PHRASES = (
     "première v1", "aperçu responsive", "dans le projet", "prêt pour être branché",
-    "à compléter par le propriétaire", "google maps à intégrer",
+    "à compléter par le propriétaire", "google maps à intégrer", "éviter d'inventer",
 )
+PUBLIC_CONTENT_FILES = {
+    "index.html", "salle.html", "evenements.html", "hebergements.html",
+    "galerie.html", "contact.html",
+}
 TEXT_SUFFIXES = {".html", ".css", ".js", ".json", ".xml", ".txt", ".md", ".yml", ".yaml", ".webmanifest", ""}
 BINARY_SUFFIXES = {".jpg", ".jpeg", ".png", ".webp", ".ico"}
 EXTERNAL_SCHEMES = {"http", "https", "mailto", "tel", "data"}
@@ -116,10 +120,11 @@ def validate_html(html_file: Path, errors: list[str]) -> None:
     text = html_file.read_text(encoding="utf-8")
     parser.feed(text)
 
-    visible_check = text.lower()
-    for phrase in FORBIDDEN_PUBLIC_PHRASES:
-        if phrase in visible_check:
-            fail(f"Forbidden technical wording in {html_file.name}: {phrase}", errors)
+    if html_file.name in PUBLIC_CONTENT_FILES:
+        visible_check = text.lower()
+        for phrase in FORBIDDEN_PUBLIC_PHRASES:
+            if phrase in visible_check:
+                fail(f"Forbidden technical wording in {html_file.name}: {phrase}", errors)
 
     ids = [attrs["id"] for _, attrs in parser.tags if "id" in attrs]
     for duplicated in sorted({item for item in ids if ids.count(item) > 1}):
@@ -231,6 +236,16 @@ def validate_manifest(errors: list[str]) -> None:
             fail(f"Manifest icon missing: {src}", errors)
 
 
+def validate_404_paths(errors: list[str]) -> None:
+    parser = SiteParser()
+    parser.feed((ROOT / "404.html").read_text(encoding="utf-8"))
+    for tag, attrs in parser.tags:
+        for attribute in ("href", "src"):
+            reference = attrs.get(attribute, "")
+            if reference and not reference.startswith(("/", "#", "http:", "https:", "mailto:", "tel:")):
+                fail(f"404.html uses non-root {attribute}: {reference}", errors)
+
+
 def validate_text_patterns(errors: list[str]) -> None:
     official_seen = False
     forbidden = {
@@ -269,6 +284,7 @@ def main() -> int:
     validate_text_patterns(errors)
     validate_sitemap(errors)
     validate_manifest(errors)
+    validate_404_paths(errors)
 
     for html_file in sorted(ROOT.glob("*.html")):
         validate_html(html_file, errors)

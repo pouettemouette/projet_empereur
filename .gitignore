@@ -11,3 +11,5 @@ build/
 lhci_reports/
 .DS_Store
 Thumbs.db
+__pycache__/
+*.py[cod]
