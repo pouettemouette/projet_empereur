@@ -38,11 +38,11 @@
     <a class="header-cta" href="contact.html">Demander un devis</a>
   </header>
   <main>
-    <section class="page-intro"><p class="eyebrow">Demande de devis</p><h1>Contactez le Château de Monlet</h1><p>Indiquez votre besoin, votre date et les informations utiles. Le formulaire est prêt pour être branché à Formspree, Brevo, PHP ou un autre service.</p></section>
+    <section class="page-intro"><p class="eyebrow">Demande de devis</p><h1>Contactez le Château de Monlet</h1><p>Indiquez votre besoin, la date souhaitée et les informations utiles afin que votre demande puisse être étudiée.</p></section>
     <section class="contact-layout">
       <form action="https://formspree.io/f/mjgdkgwz" method="POST" class="contact-form">
         <input type="hidden" name="_subject" value="Nouvelle demande depuis le site Château de Monlet">
-        <input class="form-honeypot" type="text" name="_gotcha">
+        <input class="form-honeypot" type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true">
         <input type="hidden" name="_next" value="https://www.chateau-monlet.fr/merci.html">
         <div class="form-row"><label for="name">Nom</label><input id="name" name="nom" type="text" autocomplete="name" required></div>
         <div class="form-row"><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" required></div>
@@ -56,8 +56,8 @@
         <p class="form-note">Les informations transmises servent uniquement à répondre à votre demande.</p>
       </form>
       <aside class="contact-side">
-        <div class="contact-box"><h2>Coordonnées</h2><p><strong>Téléphone :</strong> à compléter</p><p><strong>Email :</strong> à compléter</p><p><strong>Adresse :</strong> Château de Monlet, Monlet</p></div>
-        <div class="map-placeholder" aria-label="Emplacement à compléter avec une carte Google Maps"><span>Carte Google Maps à intégrer</span></div>
+        <div class="contact-box"><h2>Préparer votre demande</h2><p>Utilisez le formulaire pour nous transmettre vos coordonnées, la date envisagée et la nature de votre projet.</p><p>Les informations pratiques utiles vous seront communiquées en réponse, selon votre demande.</p></div>
+        <div class="map-placeholder" aria-label="Informations d'accès"><span>Les indications d'accès sont communiquées lors des échanges.</span></div>
       </aside>
     </section>
   </main>

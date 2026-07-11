@@ -1,4 +1,13 @@
 const body = document.body;
+
+const requestedDate = document.querySelector('input[type="date"][name="date_evenement"]');
+if (requestedDate) {
+  const today = new Date();
+  const localToday = new Date(today.getTime() - today.getTimezoneOffset() * 60000)
+    .toISOString()
+    .slice(0, 10);
+  requestedDate.min = localToday;
+}
 body.classList.add("js-enabled");
 
 const focusableSelector = [

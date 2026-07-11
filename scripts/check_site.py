@@ -13,6 +13,10 @@ ROOT = Path(__file__).resolve().parents[1]
 OFFICIAL_DOMAIN = "https://www.chateau-monlet.fr"
 OLD_DOMAIN = "chateau-" + "de-monlet.fr"
 FORMSPREE_ENDPOINT = "https://formspree.io/f/mjgdkgwz"
+FORBIDDEN_PUBLIC_PHRASES = (
+    "première v1", "aperçu responsive", "dans le projet", "prêt pour être branché",
+    "à compléter par le propriétaire", "google maps à intégrer",
+)
 TEXT_SUFFIXES = {".html", ".css", ".js", ".json", ".xml", ".txt", ".md", ".yml", ".yaml", ".webmanifest", ""}
 BINARY_SUFFIXES = {".jpg", ".jpeg", ".png", ".webp", ".ico"}
 EXTERNAL_SCHEMES = {"http", "https", "mailto", "tel", "data"}
@@ -112,6 +116,11 @@ def validate_html(html_file: Path, errors: list[str]) -> None:
     text = html_file.read_text(encoding="utf-8")
     parser.feed(text)
 
+    visible_check = text.lower()
+    for phrase in FORBIDDEN_PUBLIC_PHRASES:
+        if phrase in visible_check:
+            fail(f"Forbidden technical wording in {html_file.name}: {phrase}", errors)
+
     ids = [attrs["id"] for _, attrs in parser.tags if "id" in attrs]
     for duplicated in sorted({item for item in ids if ids.count(item) > 1}):
         fail(f"Duplicate id in {html_file.name}: {duplicated}", errors)
@@ -142,6 +151,10 @@ def validate_html(html_file: Path, errors: list[str]) -> None:
 
         if tag == "form" and attrs.get("action") != FORMSPREE_ENDPOINT:
             fail(f"Unexpected form action in {html_file.name}: {attrs.get('action')}", errors)
+
+        if tag == "button" and "gallery-item" in attrs.get("class", "").split():
+            if attrs.get("aria-haspopup") != "dialog":
+                fail(f"Gallery trigger missing aria-haspopup=dialog in {html_file.name}", errors)
 
         if tag == "a" and attrs.get("target") == "_blank":
             rel = set(attrs.get("rel", "").split())
