@@ -33,6 +33,10 @@ body.is-lightbox-open {
   touch-action: none;
 }
 img { display: block; max-width: 100%; height: auto; }
+.breadcrumb { width: min(1180px, calc(100% - 40px)); margin: 20px auto 0; }
+.breadcrumb ol { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; font-size: .9rem; }
+.breadcrumb li + li::before { content: "/"; margin-right: 8px; color: #625c52; }
+.breadcrumb a { color: var(--wine); }
 picture { display: block; max-width: 100%; }
 a { color: inherit; }
 :focus-visible { outline: 3px solid var(--focus); outline-offset: 4px; }
