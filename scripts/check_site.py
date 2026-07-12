@@ -246,6 +246,82 @@ def validate_404_paths(errors: list[str]) -> None:
                 fail(f"404.html uses non-root {attribute}: {reference}", errors)
 
 
+def css_syntax_errors(text: str, filename: str) -> list[str]:
+    """Scan CSS character by character and report errors with original line numbers."""
+    errors: list[str] = []
+    brace_lines: list[int] = []
+    line = 1
+    index = 0
+    comment_line: int | None = None
+    quote: str | None = None
+    quote_line: int | None = None
+    escaped = False
+
+    while index < len(text):
+        character = text[index]
+        next_character = text[index + 1] if index + 1 < len(text) else ""
+
+        if comment_line is not None:
+            if character == "*" and next_character == "/":
+                comment_line = None
+                index += 2
+                continue
+            if character == "\n":
+                line += 1
+            index += 1
+            continue
+
+        if quote is not None:
+            if escaped:
+                escaped = False
+                if character == "\n":
+                    line += 1
+            elif character == "\\":
+                escaped = True
+            elif character == quote:
+                quote = None
+                quote_line = None
+            elif character == "\n":
+                errors.append(f"Unclosed CSS string in {filename}:{quote_line}")
+                quote = None
+                quote_line = None
+                line += 1
+            index += 1
+            continue
+
+        if character == "/" and next_character == "*":
+            comment_line = line
+            index += 2
+            continue
+        if character in {"'", '"'}:
+            quote = character
+            quote_line = line
+        elif character == "{":
+            brace_lines.append(line)
+        elif character == "}":
+            if brace_lines:
+                brace_lines.pop()
+            else:
+                errors.append(f"Unmatched closing CSS brace in {filename}:{line}")
+        elif character == "\n":
+            line += 1
+        index += 1
+
+    if comment_line is not None:
+        errors.append(f"Unclosed CSS comment in {filename}:{comment_line}")
+    if quote is not None:
+        errors.append(f"Unclosed CSS string in {filename}:{quote_line}")
+    for opening_line in brace_lines:
+        errors.append(f"Unclosed CSS block in {filename}:{opening_line}")
+    return errors
+
+
+def validate_css_braces(errors: list[str]) -> None:
+    for css_file in sorted(ROOT.rglob("*.css")):
+        relative = css_file.relative_to(ROOT).as_posix()
+        errors.extend(css_syntax_errors(css_file.read_text(encoding="utf-8"), relative))
+
+
 def validate_text_patterns(errors: list[str]) -> None:
     official_seen = False
     forbidden = {
@@ -285,6 +361,7 @@ def main() -> int:
     validate_sitemap(errors)
     validate_manifest(errors)
     validate_404_paths(errors)
+    validate_css_braces(errors)
 
     for html_file in sorted(ROOT.glob("*.html")):
         validate_html(html_file, errors)
