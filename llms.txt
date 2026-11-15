@@ -1,0 +1,17 @@
+# Château de Monlet
+
+> Le Château de Monlet, à Monlet en France, présente une salle de spectacle et de réception, une suite et deux chambres. Le site permet d’envoyer une demande de devis ou de disponibilité.
+
+## Pages principales
+
+- [Accueil](https://www.chateau-monlet.fr/)
+- [Salle de spectacle et de réception](https://www.chateau-monlet.fr/salle.html)
+- [Événements privés et professionnels](https://www.chateau-monlet.fr/evenements.html)
+- [Suite et chambres](https://www.chateau-monlet.fr/hebergements.html)
+- [Galerie de photos](https://www.chateau-monlet.fr/galerie.html)
+- [Contact et demandes](https://www.chateau-monlet.fr/contact.html)
+
+## Informations pratiques
+
+- [Conditions d’utilisation](https://www.chateau-monlet.fr/conditions-utilisation.html)
+- [Politique de confidentialité](https://www.chateau-monlet.fr/politique-confidentialite.html)

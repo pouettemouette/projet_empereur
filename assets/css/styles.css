@@ -753,7 +753,7 @@ input,
 select,
 textarea {
   width: 100%;
-  border: 1px solid rgba(36, 28, 23, .24);
+  border: 1px solid #8A8176;
   border-radius: 4px;
   padding: 12px 13px;
   color: var(--ink);
@@ -914,7 +914,7 @@ a:focus-visible {
 }
 
 @media (max-width: 768px) {
-  body:not(.js-enabled) { padding-bottom: calc(84px + env(safe-area-inset-bottom)); }
+  body:not(.js-enabled):has(.mobile-sticky-cta) { padding-bottom: calc(84px + env(safe-area-inset-bottom)); }
   .mobile-sticky-cta {
     position: fixed;
     left: 16px;

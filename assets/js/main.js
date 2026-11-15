@@ -8,6 +8,19 @@ if (requestedDate) {
     .slice(0, 10);
   requestedDate.min = localToday;
 }
+const contactForm = document.querySelector(".contact-form");
+if (contactForm) {
+  for (const field of contactForm.querySelectorAll('input[type="text"][required], textarea[required]')) {
+    const validateText = () => {
+      const isBlank = field.value.length > 0 && field.value.trim().length === 0;
+      field.setCustomValidity(isBlank ? "Veuillez renseigner ce champ." : "");
+    };
+    field.addEventListener("input", validateText);
+    field.addEventListener("change", validateText);
+    validateText();
+  }
+}
+
 body.classList.add("js-enabled");
 
 const focusableSelector = [
@@ -121,8 +134,7 @@ const stickyCta = document.querySelector(".mobile-sticky-cta");
 if (stickyCta) {
   const blockers = [
     document.querySelector(".site-footer"),
-    document.querySelector(".contact-layout"),
-    ...document.querySelectorAll(".cta-band")
+    ...document.querySelectorAll(".hero-actions, .event-hero-copy, .cta-band")
   ].filter(Boolean);
   const visibleBlockers = new Set();
   let isBlocked = false;
@@ -215,11 +227,6 @@ if (heroCarousel) {
       });
     };
 
-    const preloadNextSlide = () => {
-      const nextSlide = slides[(activeIndex + 1) % slides.length];
-      preloadImage(largestSrcFromPicture(nextSlide));
-    };
-
     function showSlide(index) {
       activeIndex = (index + slides.length) % slides.length;
       slides.forEach((slide, slideIndex) => {
@@ -228,7 +235,6 @@ if (heroCarousel) {
         slide.setAttribute("aria-hidden", String(!isActive));
       });
       updateDots();
-      preloadNextSlide();
     }
 
     const nextSlide = () => showSlide(activeIndex + 1);

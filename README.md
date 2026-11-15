@@ -26,3 +26,12 @@ GitHub Pages sert directement les fichiers statiques. Le formulaire de contact e
 
 Les coordonnées, tarifs, capacités, disponibilités, équipements et informations juridiques ne doivent jamais être inventés. Toute nouvelle information de ce type doit être confirmée par le propriétaire avant publication.
 
+
+
+## Vérifications avant publication
+
+- Dans les réglages GitHub Pages, vérifier que l’option **Enforce HTTPS** est active. Après publication, contrôler que l’adresse HTTP redirige vers HTTPS et qu’une URL inconnue renvoie la page 404 avec le statut HTTP 404.
+- Confirmer l’identité et les coordonnées de l’éditeur, les coordonnées complètes de l’hébergeur, le contact pour les droits et la durée de conservation des demandes. Les conditions d’utilisation décrivent le site et le formulaire. Les conditions commerciales doivent refléter les modalités validées par le château.
+- Vérifier la réception d’une demande de test et la redirection configurée côté Formspree. Le champ anti-spam `_gotcha` reste actif.
+- Les pages publiques chargent leurs ressources depuis le site. Avant d’ajouter une mesure d’audience, définir le service et vérifier ses conditions de consentement et l’information des visiteurs.
+- Après déploiement, vérifier la propriété `chateau-monlet.fr` dans Google Search Console, soumettre `sitemap.xml` et inspecter l’URL d’accueil. Consulter les Core Web Vitals de terrain quand les données sont disponibles. Le rapport Lighthouse de la CI mesure les performances en laboratoire.

@@ -34,27 +34,38 @@
     <a class="brand" href="index.html"><img class="brand-crest" src="assets/images/blason-monlet.webp" alt="" width="146" height="200"><span>Château de Monlet</span></a>
     <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav"><span class="sr-only">Ouvrir le menu</span><span></span><span></span><span></span></button>
     <nav class="site-nav" id="site-nav" aria-label="Navigation principale">
-      <a href="index.html" data-nav="accueil">Accueil</a><a href="salle.html" data-nav="salle">Salle</a><a href="evenements.html" data-nav="evenements">Événements</a><a href="hebergements.html" data-nav="hebergements">Hébergements</a><a href="galerie.html" data-nav="galerie">Galerie</a><a href="contact.html" data-nav="contact">Contact</a><a class="nav-cta" href="contact.html">Demander un devis</a>
+      <a href="index.html" data-nav="accueil">Accueil</a><a href="salle.html" data-nav="salle">Salle</a><a href="evenements.html" data-nav="evenements">Événements</a><a href="hebergements.html" data-nav="hebergements">Hébergements</a><a href="galerie.html" data-nav="galerie">Galerie</a><a href="contact.html" data-nav="contact">Contact</a>
     </nav>
-    <a class="header-cta" href="contact.html">Demander un devis</a>
   </header>
   <main id="contenu">
+    <nav class="breadcrumb" aria-label="Fil d’Ariane">
+      <ol itemscope itemtype="https://schema.org/BreadcrumbList">
+        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+          <a itemprop="item" href="/"><span itemprop="name">Accueil</span></a>
+          <meta itemprop="position" content="1">
+        </li>
+        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem" aria-current="page">
+          <span itemprop="name">Contact</span>
+          <meta itemprop="position" content="2">
+        </li>
+      </ol>
+    </nav>
     <section class="page-intro"><p class="eyebrow">Demande de devis</p><h1>Contactez le Château de Monlet</h1><p>Indiquez votre besoin, la date souhaitée et les informations utiles afin que votre demande puisse être étudiée.</p></section>
     <section class="contact-layout">
       <form action="https://formspree.io/f/mjgdkgwz" method="POST" class="contact-form">
         <input type="hidden" name="_subject" value="Nouvelle demande depuis le site Château de Monlet">
         <input class="form-honeypot" type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true">
         <input type="hidden" name="_next" value="https://www.chateau-monlet.fr/merci.html">
-        <div class="form-row"><label for="name">Nom</label><input id="name" name="nom" type="text" autocomplete="name" required></div>
-        <div class="form-row"><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" required></div>
-        <div class="form-row"><label for="phone">Téléphone (facultatif)</label><input id="phone" name="telephone" type="tel" autocomplete="tel"></div>
+        <div class="form-row"><label for="name">Nom</label><input id="name" name="nom" type="text" autocomplete="name" maxlength="120" required></div>
+        <div class="form-row"><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" maxlength="254" required></div>
+        <div class="form-row"><label for="phone">Téléphone (facultatif)</label><input id="phone" name="telephone" type="tel" autocomplete="tel" maxlength="40"></div>
         <div class="form-row"><label for="request-type">Type de demande</label><select id="request-type" name="type_demande" required><option value="">Choisir</option><option>Location de salle</option><option>Spectacle</option><option>Événement privé</option><option>Événement professionnel</option><option>Hébergement</option><option>Autre</option></select></div>
         <div class="form-row"><label for="date">Date souhaitée (facultatif)</label><input id="date" name="date_evenement" type="date"></div>
         <div class="form-row"><label for="people">Nombre de personnes</label><input id="people" name="nombre_personnes" type="number" min="1" inputmode="numeric"></div>
-        <div class="form-row full"><label for="message">Message</label><textarea id="message" name="message" rows="7" required></textarea></div>
+        <div class="form-row full"><label for="message">Message</label><textarea id="message" name="message" rows="7" maxlength="5000" required></textarea></div>
         <div class="form-row full consent-row"><label><input name="consentement" type="checkbox" value="oui" required> J'accepte que mes informations soient utilisées pour répondre à ma demande.</label></div>
         <button type="submit" class="btn btn-primary">Envoyer ma demande</button>
-        <p class="form-note">Les informations transmises servent uniquement à répondre à votre demande.</p>
+        <p class="form-note">Les informations transmises servent à répondre à votre demande. Consultez la <a href="politique-confidentialite.html">politique de confidentialité</a>.</p>
       </form>
       <aside class="contact-side">
         <div class="contact-box"><h2>Préparer votre demande</h2><p>Utilisez le formulaire pour nous transmettre vos coordonnées, la date envisagée et la nature de votre projet.</p><p>Les informations pratiques utiles vous seront communiquées en réponse, selon votre demande.</p></div>
@@ -72,9 +83,8 @@
   <footer class="site-footer">
     <div class="footer-brand"><strong>Château de Monlet</strong><p>Un lieu de caractère pour vos événements et vos séjours.</p></div>
     <nav aria-label="Navigation pied de page"><a href="index.html">Accueil</a><a href="salle.html">La salle</a><a href="evenements.html">Événements</a><a href="hebergements.html">Hébergements</a><a href="galerie.html">Galerie</a><a href="contact.html">Contact</a></nav>
-    <div class="footer-bottom"><p>© Château de Monlet</p><div><a href="mentions-legales.html">Mentions légales</a><a href="politique-confidentialite.html">Confidentialité</a></div></div>
+    <div class="footer-bottom"><p>© Château de Monlet</p><div><a href="mentions-legales.html">Mentions légales</a><a href="politique-confidentialite.html">Confidentialité</a><a href="conditions-utilisation.html">Conditions d’utilisation</a></div></div>
   </footer>
-  <a class="mobile-sticky-cta" href="contact.html">Demander un devis</a>
   <script src="assets/js/main.js"></script>
 </body>
 </html>

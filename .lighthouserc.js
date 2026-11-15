@@ -1,11 +1,12 @@
 module.exports = {
   ci: {
     collect: {
-      startServerCommand: "python3 -m http.server 4173",
+      startServerCommand: "python3 -u -m http.server 4173",
       startServerReadyPattern: "Serving HTTP",
       url: [
         "http://localhost:4173/",
         "http://localhost:4173/salle.html",
+        "http://localhost:4173/evenements.html",
         "http://localhost:4173/hebergements.html",
         "http://localhost:4173/galerie.html",
         "http://localhost:4173/contact.html"
@@ -18,6 +19,9 @@ module.exports = {
     },
     assert: {
       assertions: {
+        "largest-contentful-paint": ["warn", { maxNumericValue: 2500 }],
+        "cumulative-layout-shift": ["warn", { maxNumericValue: 0.1 }],
+        "total-blocking-time": ["warn", { maxNumericValue: 200 }],
         "categories:performance": ["warn", { minScore: 0.5 }],
         "categories:accessibility": ["warn", { minScore: 0.8 }],
         "categories:best-practices": ["warn", { minScore: 0.8 }],

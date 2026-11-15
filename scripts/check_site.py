@@ -130,6 +130,12 @@ def validate_html(html_file: Path, errors: list[str]) -> None:
     for duplicated in sorted({item for item in ids if ids.count(item) > 1}):
         fail(f"Duplicate id in {html_file.name}: {duplicated}", errors)
 
+    headings = [int(tag[1]) for tag, _ in parser.tags if tag in ("h1", "h2", "h3", "h4", "h5", "h6")]
+    if headings.count(1) != 1 or headings[0] != 1:
+        fail(f"Expected one initial h1 in {html_file.name}", errors)
+    if any(level > previous + 1 for previous, level in zip(headings, headings[1:])):
+        fail(f"Skipped heading level in {html_file.name}", errors)
+
     for block in parser.ld_json_blocks:
         try:
             data = json.loads(block)
@@ -139,6 +145,9 @@ def validate_html(html_file: Path, errors: list[str]) -> None:
         scan_json_for_placeholders(data, "jsonld", html_file.name, errors)
 
     for tag, attrs in parser.tags:
+        if tag == "img" and "alt" not in attrs:
+            fail(f"Image missing alt attribute in {html_file.name}: {attrs.get('src')}", errors)
+
         if "style" in attrs:
             fail(f"Inline style attribute in {html_file.name}: <{tag}>", errors)
 
@@ -202,6 +211,40 @@ def validate_sitemap(errors: list[str]) -> None:
 
     namespace = {"sm": "http://www.sitemaps.org/schemas/sitemap/0.9"}
     locs = [node.text or "" for node in tree.findall(".//sm:loc", namespace)]
+    expected_urls = set()
+    for page in ROOT.glob("*.html"):
+        parser = SiteParser()
+        parser.feed(page.read_text(encoding="utf-8"))
+        noindex = any(
+            tag == "meta"
+            and attrs.get("name", "").lower() == "robots"
+            and "noindex" in re.split(r"[,\s]+", attrs.get("content", "").lower())
+            for tag, attrs in parser.tags
+        )
+        if page.name in {"404.html", "merci.html"}:
+            if not noindex:
+                fail(f"Utility page must declare noindex: {page.name}", errors)
+            continue
+        url = f"{OFFICIAL_DOMAIN}/{'' if page.name == 'index.html' else page.name}"
+        expected_urls.add(url)
+        if noindex:
+            fail(f"Public page unexpectedly declares noindex: {page.name}", errors)
+        canonicals = [
+            attrs.get("href") for tag, attrs in parser.tags
+            if tag == "link" and "canonical" in attrs.get("rel", "").lower().split()
+        ]
+        if canonicals != [url]:
+            fail(f"Expected one canonical URL matching {url}", errors)
+        descriptions = [
+            attrs.get("content", "").strip() for tag, attrs in parser.tags
+            if tag == "meta" and attrs.get("name", "").lower() == "description"
+        ]
+        if len(descriptions) != 1 or not descriptions[0]:
+            fail(f"Expected one nonempty description in {page.name}", errors)
+
+    if set(locs) != expected_urls or len(locs) != len(expected_urls):
+        fail("Sitemap must contain each public page exactly once", errors)
+
     for loc in locs:
         if not loc.startswith(f"{OFFICIAL_DOMAIN}/"):
             fail(f"Unexpected sitemap URL: {loc}", errors)
