@@ -115,6 +115,16 @@ def scan_json_for_placeholders(value: object, path: str, html_name: str, errors:
         fail(f"JSON-LD placeholder in {html_name}: {path}", errors)
 
 
+def site_html_pages() -> list[Path]:
+    return [
+        page for page in sorted(ROOT.glob("*.html"))
+        if not (
+            re.fullmatch(r"google[0-9a-f]{16}\.html", page.name)
+            and page.read_text(encoding="utf-8").strip() == f"google-site-verification: {page.name}"
+        )
+    ]
+
+
 def validate_html(html_file: Path, errors: list[str]) -> None:
     parser = SiteParser()
     text = html_file.read_text(encoding="utf-8")
@@ -212,7 +222,7 @@ def validate_sitemap(errors: list[str]) -> None:
     namespace = {"sm": "http://www.sitemaps.org/schemas/sitemap/0.9"}
     locs = [node.text or "" for node in tree.findall(".//sm:loc", namespace)]
     expected_urls = set()
-    for page in ROOT.glob("*.html"):
+    for page in site_html_pages():
         parser = SiteParser()
         parser.feed(page.read_text(encoding="utf-8"))
         noindex = any(
@@ -406,7 +416,7 @@ def main() -> int:
     validate_404_paths(errors)
     validate_css_braces(errors)
 
-    for html_file in sorted(ROOT.glob("*.html")):
+    for html_file in site_html_pages():
         validate_html(html_file, errors)
 
     robots = (ROOT / "robots.txt").read_text(encoding="utf-8")
